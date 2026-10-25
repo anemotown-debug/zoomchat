@@ -10,14 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 
 public class ZoomChatClient implements ClientModInitializer {
-    /** Vanilla's FOV option bottoms out at 30, so the real zoom is limited by that. */
+    /** Vanilla's FOV option bottoms out at 30, so that is the strongest zoom possible. */
     private static final int MIN_FOV = 30;
+    /** Every press of C starts at this FOV. Scroll up zooms in, scroll down zooms out. */
+    private static final int START_FOV = 30;
     private static final double STEP = 1.15;
 
-    /** Current zoom level (1.0 = no zoom). Kept between presses; changed with the scroll wheel. */
-    /** Zoom level every press starts at. 1.0 = no zoom. */
-    private static final double START_ZOOM = 1.5;
-    private static double zoomFactor = START_ZOOM;
+    private static double zoomFactor = 2.0;
 
     private static KeyMapping zoomKey;
     private static KeyMapping previewKey;
@@ -50,8 +49,8 @@ public class ZoomChatClient implements ClientModInitializer {
         boolean wantZoom = noScreen && zoomKey.isDown();
         if (wantZoom && !zooming) {
             savedFov = mc.options.fov().get();
+            zoomFactor = savedFov / (double) START_FOV;
             zooming = true;
-            zoomFactor = START_ZOOM;
         }
         if (wantZoom) {
             zoomFactor = Math.min(zoomFactor, maxFactor());
