@@ -2,6 +2,6 @@
   "required": true,
   "package": "com.example.zoomchat.mixin",
   "compatibilityLevel": "JAVA_25",
-  "client": ["MouseHandlerMixin"],
+  "client": ["ChatComponentMixin", "MouseHandlerMixin"],
   "injectors": { "defaultRequire": 1 }
 }
