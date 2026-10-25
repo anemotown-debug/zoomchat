@@ -22,3 +22,13 @@ jobs:
         with:
           name: zoomchat-jar
           path: zoomchat/build/libs/*.jar
+      - name: Inspect ChatComponent
+        if: always()
+        run: |
+          for j in $(find "$HOME/.gradle" -name '*.jar' -size +5M 2>/dev/null); do
+            if unzip -l "$j" 2>/dev/null | grep -q 'net/minecraft/client/gui/components/ChatComponent.class'; then
+              echo "== $j"
+              javap -p -cp "$j" net.minecraft.client.gui.components.ChatComponent
+              break
+            fi
+          done
