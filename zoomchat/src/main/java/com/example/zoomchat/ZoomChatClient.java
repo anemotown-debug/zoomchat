@@ -15,7 +15,9 @@ public class ZoomChatClient implements ClientModInitializer {
     private static final double STEP = 1.15;
 
     /** Current zoom level (1.0 = no zoom). Kept between presses; changed with the scroll wheel. */
-    private static double zoomFactor = 2.0;
+    /** Zoom level every press starts at. 1.0 = no zoom. */
+    private static final double START_ZOOM = 1.5;
+    private static double zoomFactor = START_ZOOM;
 
     private static KeyMapping zoomKey;
     private static KeyMapping previewKey;
@@ -49,6 +51,7 @@ public class ZoomChatClient implements ClientModInitializer {
         if (wantZoom && !zooming) {
             savedFov = mc.options.fov().get();
             zooming = true;
+            zoomFactor = START_ZOOM;
         }
         if (wantZoom) {
             zoomFactor = Math.min(zoomFactor, maxFactor());
