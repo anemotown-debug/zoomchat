@@ -22,8 +22,16 @@ jobs:
         with:
           name: zoomchat-jar
           path: zoomchat/build/libs/*.jar
-      - name: Inspect display mode
+      - name: Inspect chat fading
         if: always()
         run: |
-          javap -p -constants -cp "$HOME/.gradle/caches/fabric-loom/26.3/minecraft-merged.jar" 'net.minecraft.client.gui.components.ChatComponent$DisplayMode'
-          javap -p -cp "$HOME/.gradle/caches/fabric-loom/26.3/minecraft-merged.jar" net.minecraft.client.renderer.GameRenderer | grep -i fov
+          J="$HOME/.gradle/caches/fabric-loom/26.3/minecraft-merged.jar"
+          echo "== AlphaCalculator"
+          javap -p -constants -cp "$J" 'net.minecraft.client.gui.components.ChatComponent$AlphaCalculator' || true
+          echo "== ChatComponent uses"
+          javap -p -c -cp "$J" net.minecraft.client.gui.components.ChatComponent | grep -E "isChatFocused|AlphaCalculator|DisplayMode|^  (public|private)" || true
+          echo "== Callers"
+          for c in net.minecraft.client.gui.Gui net.minecraft.client.gui.Hud; do
+            echo "-- $c"
+            javap -p -c -cp "$J" "$c" 2>/dev/null | grep -B10 -A2 "ChatComponent.extractRenderState" || true
+          done
