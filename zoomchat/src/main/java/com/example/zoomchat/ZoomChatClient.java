@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 public class ZoomChatClient implements ClientModInitializer {
     /** Vanilla's FOV option bottoms out at 30, so the real zoom is limited by that. */
@@ -33,16 +32,16 @@ public class ZoomChatClient implements ClientModInitializer {
                 KeyMapping.Category.register(Identifier.fromNamespaceAndPath("zoomchat", "main"));
 
         zoomKey = KeyMappingHelper.registerKeyMapping(
-                new KeyMapping("key.zoomchat.zoom", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, category));
+                new KeyMapping("key.zoomchat.zoom", InputConstants.KEY_C, category));
         previewKey = KeyMappingHelper.registerKeyMapping(
-                new KeyMapping("key.zoomchat.preview_chat", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Z, category));
+                new KeyMapping("key.zoomchat.preview_chat", InputConstants.KEY_Z, category));
 
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> stopZoom(mc));
     }
 
     private void tick(Minecraft mc) {
-        boolean noScreen = mc.screen == null && mc.player != null;
+        boolean noScreen = mc.gui.screen() == null && mc.player != null;
 
         chatPreviewActive = noScreen && previewKey.isDown();
 
